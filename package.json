@@ -1,0 +1,45 @@
+{
+  "name": "rdi-recruiter-module",
+  "version": "1.0.0",
+  "description": "RDI Recruiter Module - Recruiter View for managing student proposals",
+  "private": true,
+  "engines": {
+    "node": ">=20 <21",
+    "npm": ">=9"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:reset": "prisma migrate reset --force && npm run db:seed",
+    "db:studio": "prisma studio",
+    "preinstall": "node -e \"const v = process.version; const major = parseInt(v.slice(1).split('.')[0]); if (major !== 20) { console.error('ERROR: Node.js version ' + v + ' is not supported. Please use Node.js 20 LTS.'); console.error('Run: nvm use 20'); process.exit(1); } console.log('Node version check passed: ' + v);\""
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.0",
+    "@tensorflow-models/universal-sentence-encoder": "^1.3.3",
+    "@tensorflow/tfjs": "^4.22.0",
+    "bcryptjs": "^2.4.3",
+    "jose": "^5.1.3",
+    "next": "^14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.10.4",
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "prisma": "^5.7.0",
+    "tailwindcss": "^3.3.6",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,109 @@
+// Prisma Schema for RDI Recruiter Module
+// IMPORTANT: SQLite does NOT support enum types
+// All status fields use String with validation in application code
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Company model - acts as recruiter account
+model Company {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password      String   // hashed with bcrypt
+  industry      String?
+  location      String?
+  website       String?
+  contactPerson String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  applications  Application[]
+  recruiterNotes RecruiterNote[]
+}
+
+// Student model
+model Student {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  skills    String   // JSON array of skills
+  bio       String?
+  resumeUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  proposals Proposal[]
+}
+
+// Proposal model - created by students
+model Proposal {
+  id          String   @id @default(uuid())
+  title       String
+  summary     String
+  description String
+  attachmentUrl String?
+  skills      String   // JSON array of required skills
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  applications Application[]
+}
+
+// Application model - links companies to student proposals
+model Application {
+  id            String   @id @default(uuid())
+  currentStatus String   @default("NEW") // Status as String, NOT enum
+  submittedAt   DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  studentId     String
+  proposalId    String
+  proposal      Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+
+  statusHistory StatusHistory[]
+  recruiterNotes RecruiterNote[]
+
+  @@unique([companyId, proposalId])
+}
+
+// StatusHistory model - audit trail for status changes
+model StatusHistory {
+  id          String   @id @default(uuid())
+  status      String   // Status as String, NOT enum
+  changedBy   String   // Company ID who made the change
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+}
+
+// RecruiterNote model - private notes for recruiters
+model RecruiterNote {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
