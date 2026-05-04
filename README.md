@@ -502,4 +502,5 @@ npm run lint            # Run ESLint on all files
 
 MIT License — free to use and modify.
 
-ICT Project 2026
+ICT Project 2026 - Prashant Bhandari
+
